@@ -29,7 +29,7 @@ namespace SecondAssignmentApi.Controllers
             {
                 return BadRequest("Title already exists!");
             }
-            var CreatedBuyer = 
+            var CreatedBuyer = mapper.Map<Buyer>
         }
     }
 }

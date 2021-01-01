@@ -12,6 +12,7 @@ namespace SecondAssignmentApi.Extenions
         {
             CreateMap<ApartmentForCreationDto, Appartment>();
             CreateMap<Appartment, AppartmentoReturn>();
+            CreateMap<BuyerForCreationDto, Buyer>().ForMember(dest => dest.Credit, opt => opt.MapFrom(src => src.InitialCredit));
         }
     }
 }

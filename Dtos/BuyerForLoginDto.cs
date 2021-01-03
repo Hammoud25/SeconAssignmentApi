@@ -2,10 +2,11 @@
 
 namespace SecondAssignmentApi.Dtos
 {
-    public class BuyerForCreationDto
+    public class BuyerForLoginDto
     {
         [Required]
         public string FullName { get; set; }
-        public int InitialCredit { get; set; }
+        [Required]
+        public string Password { get; set; }
     }
 }

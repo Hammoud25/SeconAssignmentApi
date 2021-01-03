@@ -4,7 +4,7 @@ namespace SecondAssignmentApi.IModels
 {
     public interface IOwnedAppartment : IAppartment
     {
-        int OwnerId { get; set; }
+        int OwnerId { get => Owner.Id;}
         Buyer Owner { get; set; }
     }
 }

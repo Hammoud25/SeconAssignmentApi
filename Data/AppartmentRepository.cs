@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SecondAssignmentApi.Extenions;
+using SecondAssignmentApi.IModels;
 using SecondAssignmentApi.Models;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SecondAssignmentApi.Data
@@ -39,6 +42,25 @@ namespace SecondAssignmentApi.Data
                 return true;
             };
             return false;
+        }
+
+        public async Task<PagedList<Appartment>> GetAppartments(UserParams userParams)
+        {
+            var appartments = context.AppartmentsForSale.AsQueryable();
+            appartments = appartments.Where(opt => opt.Price >= userParams.MinPrice);
+            appartments = appartments.Where(opt => opt.Price < userParams.MaxPrice);
+            appartments = appartments.Where(opt => opt.Address.Contains(userParams.ProvidedText.ToLower()));
+            if (userParams.NbOfRooms != 0)
+            {
+                appartments = appartments.Where(opt => opt.Rooms == userParams.NbOfRooms);
+            }
+            appartments = appartments.OrderByDescending(apt => apt.Price);
+            return await PagedList<Appartment>.CreateAsync(appartments, userParams.PageNumber, userParams.PageSize);
+        }
+
+        public void Delete<T>(T entity) where T : class
+        {
+            context.Remove(entity);
         }
     }
 }

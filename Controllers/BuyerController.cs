@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SecondAssignmentApi.Data;
 using SecondAssignmentApi.Dtos;
+using SecondAssignmentApi.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,11 +17,13 @@ namespace SecondAssignmentApi.Controllers
     {
         private readonly IBuyerRepository repo;
         private readonly IMapper mapper;
+        private readonly IAppartmentRepository apprepo;
 
-        public BuyerController(IBuyerRepository _repo, IMapper _mapper)
+        public BuyerController(IBuyerRepository _repo, IMapper _mapper, IAppartmentRepository _apprepo)
         {
             repo = _repo;
             mapper = _mapper;
+            apprepo = _apprepo;
         }
 
         [HttpGet("{id}", Name = "GetBuyer")]
@@ -34,16 +37,32 @@ namespace SecondAssignmentApi.Controllers
         [HttpPost("{buyerid}/buy/{appid}")]
         public async Task<IActionResult> Buy([FromRoute] int buyerid, [FromRoute] int appid)
         {
-            var response = await repo.Buy(buyerid, appid);
-            if (!response.result)
+            if (!await apprepo.AppartmentExists(appid))
+            {
+                return BadRequest("Appartment doesnt exist.");
+            }
+
+            if (!await repo.BuyerExists(buyerid)) return BadRequest("Buyer doesnt exist.");
+
+            var apprtmentFromRepo = await apprepo.GetAppartment(appid);
+
+            if (apprtmentFromRepo == null)
             {
                 return BadRequest();
             }
+            var buyerFromRepo =await repo.GetBuyer(buyerid);
+
+            if (buyerFromRepo.Credit < apprtmentFromRepo.Price) return BadRequest("Buyer doesnt have enough credit.");
+
+            var ownedAppartment = mapper.Map<OwnedAppartment>(apprtmentFromRepo);
+
+            ownedAppartment = await repo.Buy(buyerFromRepo, ownedAppartment, appid);
+
             if (await repo.SaveAll())
             {
-                var id = repo.GetId(response.OwnedAppartment.Address, buyerid);
-                response.OwnedAppartment.Id = id.Result;
-                return CreatedAtRoute("GetOwnedAppartment", new { id = response.OwnedAppartment.OwnerId, appid = response.OwnedAppartment.Id }, response);
+                var id =await repo.GetId(ownedAppartment.Address, buyerid);
+                ownedAppartment.Id = id;
+                return CreatedAtRoute("GetOwnedAppartment", new { id = ownedAppartment.OwnerId, appid = ownedAppartment.Id }, ownedAppartment);
             }
             return BadRequest();
 

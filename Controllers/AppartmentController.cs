@@ -50,10 +50,10 @@ namespace SecondAssignmentApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
-            var users = await repo.GetAppartments(userParams);
-            var usersToReturn = mapper.Map<IEnumerable<AppartmentForListDto>>(users);
-            Response.AddPagination(users.CurrentPage, users.PageSize,users.TotalCount,users.TotalPages);
-            return Ok(usersToReturn);
+            var appartmentsFromRepo = await repo.GetAppartments(userParams);
+            var AppartmentsToReturn = mapper.Map<IEnumerable<AppartmentForListDto>>(appartmentsFromRepo);
+            Response.AddPagination(appartmentsFromRepo.CurrentPage, appartmentsFromRepo.PageSize, appartmentsFromRepo.TotalCount, appartmentsFromRepo.TotalPages);
+            return Ok(AppartmentsToReturn);
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAppartment(int id, AppartmentForUpdateDto updateDto)

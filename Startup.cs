@@ -1,15 +1,9 @@
-using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using SecondAssignmentApi.Data;
-using System;
-using System.Text;
+using SecondAssignmentApi.Root;
 
 namespace SecondAssignmentApi
 {
@@ -25,42 +19,15 @@ namespace SecondAssignmentApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            try
+            services.AddControllers().AddNewtonsoftJson(opt =>
             {
-                services.AddDbContext<DataContext>(x => x.UseSqlite
-                (Configuration.GetConnectionString("DefaultConnection")));
-                services.AddControllers().AddNewtonsoftJson(opt =>
-                {
-                    opt.SerializerSettings.ReferenceLoopHandling =
-                    Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                }
-                );
-                services.AddCors();
-                services.AddAutoMapper(typeof(AppartmentRepository).Assembly);
-                services.AddScoped<IAppartmentRepository, AppartmentRepository>();
-                services.AddScoped<IBuyerRepository, BuyeRepository>();
-                services.AddScoped<IAuthRepo, AuthRepo>();
-                services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
-                    {
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuerSigningKey = true,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes
-                                (Configuration.GetSection("AppSettings:Token").Value)),
-                            ValidateIssuer = false,
-                            ValidateAudience = false
-                        };
-                    }
-                    );
+                opt.SerializerSettings.ReferenceLoopHandling =
+                Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             }
-            catch (System.Exception e)
-            {
+            );
+            services.AddCors();
+            ServiceConfiguration.InjectDependencies(services, Configuration);
 
-                Console.WriteLine(e.Message);
-            }
-
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

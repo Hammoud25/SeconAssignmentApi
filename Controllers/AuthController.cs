@@ -1,19 +1,14 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SecondAssignmentApi.Data;
 using SecondAssignmentApi.Dtos;
-using SecondAssignmentApi.IModels;
-using SecondAssignmentApi.Models;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace SecondAssignmentApi.Controllers
 {
@@ -26,7 +21,7 @@ namespace SecondAssignmentApi.Controllers
         private readonly IMapper mapper;
         private readonly IBuyerRepository bRepo;
 
-        public AuthController(IConfiguration _config, IAuthRepo _repo, IMapper _mapper,IBuyerRepository _BRepo)
+        public AuthController(IConfiguration _config, IAuthRepo _repo, IMapper _mapper, IBuyerRepository _BRepo)
         {
             config = _config;
             repo = _repo;
@@ -40,8 +35,8 @@ namespace SecondAssignmentApi.Controllers
         {
             buyerinfo.FullName = buyerinfo.FullName.ToLower();
             if (await repo.BuyerExists(buyerinfo.FullName) != 0) return BadRequest();
-            var createdBuyer =await repo.Register(buyerinfo);
-            
+            var createdBuyer = await repo.Register(buyerinfo);
+
             if (await repo.SaveAll())
             {
                 var buyerid = await repo.BuyerExists(createdBuyer.FullName);

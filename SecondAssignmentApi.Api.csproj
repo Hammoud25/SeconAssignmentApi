@@ -6,6 +6,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SecondAssignmentApi.Core\**" />
+    <Compile Remove="SecondAssignmentApi.Data\**" />
+    <Compile Remove="SecondAssignmentApi.Root\**" />
+    <Content Remove="SecondAssignmentApi.Core\**" />
+    <Content Remove="SecondAssignmentApi.Data\**" />
+    <Content Remove="SecondAssignmentApi.Root\**" />
+    <EmbeddedResource Remove="SecondAssignmentApi.Core\**" />
+    <EmbeddedResource Remove="SecondAssignmentApi.Data\**" />
+    <EmbeddedResource Remove="SecondAssignmentApi.Root\**" />
+    <None Remove="SecondAssignmentApi.Core\**" />
+    <None Remove="SecondAssignmentApi.Data\**" />
+    <None Remove="SecondAssignmentApi.Root\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.2" />
@@ -16,9 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SecondAssignmentApi.Core\SecondAssignmentApi.Core.csproj" />
-    <ProjectReference Include="..\SecondAssignmentApi.Data\SecondAssignmentApi.Data.csproj" />
-    <ProjectReference Include="..\SecondAssignmentApi.Root\SecondAssignmentApi.Root.csproj" />
+    <ProjectReference Include="SecondAssignmentApi.Core\SecondAssignmentApi.Core.csproj" />
+    <ProjectReference Include="SecondAssignmentApi.Data\SecondAssignmentApi.Data.csproj" />
+    <ProjectReference Include="SecondAssignmentApi.Root\SecondAssignmentApi.Root.csproj" />
   </ItemGroup>
 
 
